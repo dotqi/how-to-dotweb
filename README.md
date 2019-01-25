@@ -5,7 +5,7 @@
 获取方式：go get -u github.com/devfeel/dotweb  
 
 1、简单部署  
-```
+``` go
 package main
 import (
 	"fmt"
@@ -25,7 +25,7 @@ func main() {
 ```
 2、启用TLS  
 3、文件服务  
-```
+``` GO
 package main
 import (
 	"fmt"
