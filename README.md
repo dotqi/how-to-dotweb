@@ -1,5 +1,3 @@
-# how-to-dotweb
-
 ## DOTWEB  使用心得  
 项目地址：https://github.com/devfeel/dotweb  
 获取方式：go get -u github.com/devfeel/dotweb  
@@ -24,8 +22,9 @@ func main() {
 }
 ```
 2、启用TLS  
+
 3、文件服务  
-``` GO
+``` go
 package main
 import (
 	"fmt"
@@ -49,49 +48,48 @@ func main() {
 	err := app.StartServer(8080)
 	fmt.Println("dotweb.StartServer error => ", err)
 }
-
 ```
 
 4、支持跨域
-    请求跨域时，需要中单件支持。如果自行设置中单件，可参考cors代码。
-    获取地址：go get -u github.com/devfeel/middleware
-    引用：import "github.com/devfeel/middleware/cors"
+    请求跨域时，需要中单件支持。如果自行设置中单件，可参考cors代码。  
+    获取地址：go get -u github.com/devfeel/middleware  
+    引用：import "github.com/devfeel/middleware/cors"  
 
-    ```
-    package main
-    import (
-        "fmt"
-        "github.com/devfeel/dotweb"
-        "github.com/devfeel/middleware/cors"
-    )
-    func main() {
-        app := dotweb.New()
-        // app注册中间件，设置cors选项
-        option := cors.NewConfig().UseDefault()
-        app.Use(cors.Middleware(option))
+``` go
+package main
+import (
+    "fmt"
+    "github.com/devfeel/dotweb"
+    "github.com/devfeel/middleware/cors"
+)
+func main() {
+    app := dotweb.New()
+    // app注册中间件，设置cors选项
+    option := cors.NewConfig().UseDefault()
+    app.Use(cors.Middleware(option))
 
-        // 开启所有路由的OPTIONS请求支持 默认不开启
-        // AJAX跨域请求会发送OPTIONS请求。
-        // 也可自行设置OPTIONS请求路由
-        app.HttpServer.SetEnabledAutoOPTIONS(true)
+    // 开启所有路由的OPTIONS请求支持 默认不开启
+    // AJAX跨域请求会发送OPTIONS请求。
+    // 也可自行设置OPTIONS请求路由
+    app.HttpServer.SetEnabledAutoOPTIONS(true)
 
-        // 设置路由 输出字符串 Hello Dotweb
-        app.HttpServer.GET("/", func(ctx dotweb.Context) error {
-            method := ctx.Request().Method
-            return ctx.WriteString("Hello Dotweb\n" + "Method:" + method)
-        })
-        // 设置路由 输出字符串 Hello Dotweb
-        app.HttpServer.POST("/", func(ctx dotweb.Context) error {
-            method := ctx.Request().Method
-            return ctx.WriteString("Hello Dotweb\n" + "Method:" + method)
-        })
+    // 设置路由 输出字符串 Hello Dotweb
+    app.HttpServer.GET("/", func(ctx dotweb.Context) error {
+        method := ctx.Request().Method
+        return ctx.WriteString("Hello Dotweb\n" + "Method:" + method)
+    })
+    // 设置路由 输出字符串 Hello Dotweb
+    app.HttpServer.POST("/", func(ctx dotweb.Context) error {
+        method := ctx.Request().Method
+        return ctx.WriteString("Hello Dotweb\n" + "Method:" + method)
+    })
 
-        //开启服务 端口号
-        fmt.Println("dotweb.StartServer => 8080")
-        err := app.StartServer(8080)
-        fmt.Println("dotweb.StartServer error => ", err)
-    }
-    ```
+    //开启服务 端口号
+    fmt.Println("dotweb.StartServer => 8080")
+    err := app.StartServer(8080)
+    fmt.Println("dotweb.StartServer error => ", err)
+}
+```
 
 5、Session  
 6、Cookie  
