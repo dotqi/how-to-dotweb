@@ -40,6 +40,8 @@ func main() {
 	// 默认文件服务器注册方式只处理GET请求
 	// 访问地址为 http://127.0.0.1:8080/static
 	app.HttpServer.ServerFile("/static/*", "D:/GoWork/GoTest/view")
+	// 注册中间件
+	//app.HttpServer.ServerFile("/view/*", "D:/GoWork/GoTest/view").Use(NewSessionAuth())
 	// 注册不同请求方式
 	app.HttpServer.RegisterServerFile(dotweb.RouteMethod_GET, "/get/*filepath", "D:/GoWork/GoTest/view")
 	app.HttpServer.RegisterServerFile(dotweb.RouteMethod_POST, "/post/*filepath", "D:/GoWork/GoTest/view")
@@ -92,6 +94,59 @@ func main() {
 ```
 
 5、Session  
+	// 开启SESSION 默认关闭  
+	app.HttpServer.SetEnabledSession(true)  
+	ctx.Session().Set(Key, Value)  
+	ctx.Session().Get(Key)  
+	ctx.Session().Remove(Key)  
+
 6、Cookie  
 7、分组路由  
-8、  
+
+8、中间件Middleware   
+	中间件注册方法：Use()  
+	支持中间件注册点：App、Group、RouterNode
+	ServerFile也支持注册中间件，方法同2。
+	中间件：输出SessionID
+``` go
+package main
+import (
+	"fmt"
+	"github.com/devfeel/dotweb"
+)
+
+func main() {
+	app := dotweb.New()
+	// App注册中间件
+	app.Use(NewSessionAuth())
+	// 开启SESSION
+	app.HttpServer.SetEnabledSession(true)
+	// 设置路由 输出字符串 Hello Dotweb
+	app.HttpServer.GET("/", func(ctx dotweb.Context) error {
+		method := ctx.Request().Method
+		return ctx.WriteString("Hello Dotweb\n" + "Method:" + method)
+	})
+
+	//开启服务 端口号
+	fmt.Println("dotweb.StartServer => 8080")
+	err := app.StartServer(8080)
+	fmt.Println("dotweb.StartServer error => ", err)
+}
+
+// SessionAuth 结构体
+type SessionAuth struct {
+	dotweb.BaseMiddlware
+}
+
+// Handle 处理程序
+func (m *SessionAuth) Handle(ctx dotweb.Context) error {
+	fmt.Println("SessionID = ", ctx.SessionID(), " RequestURI = ", ctx.Request().RequestURI)
+	return m.Next(ctx)
+}
+
+// NewSessionAuth New
+func NewSessionAuth() *SessionAuth {
+	sAuth := new(SessionAuth)
+	return sAuth
+}
+```
